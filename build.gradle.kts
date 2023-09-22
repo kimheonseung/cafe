@@ -15,6 +15,7 @@ plugins {
 	kotlin("plugin.spring")
 	kotlin("plugin.jpa")
 	kotlin("jvm")
+	kotlin("kapt")
 }
 
 allprojects {
@@ -58,7 +59,7 @@ subprojects {
 		implementation("org.springframework.boot:spring-boot-starter-test")
 
 		implementation("com.querydsl:querydsl-jpa:${querydslVersion}:jakarta")
-		implementation("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
+		kapt("com.querydsl:querydsl-apt:${querydslVersion}:jakarta")
 		annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 		annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
