@@ -2,6 +2,7 @@ rootProject.name = "cafe"
 include("infrastructure")
 include("infrastructure:database")
 findProject(":infrastructure:database")?.name = "database"
+include("utility")
 
 pluginManagement {
     val kotlinVersion = "1.8.22"
