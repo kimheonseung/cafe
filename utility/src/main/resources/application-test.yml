@@ -1,0 +1,4 @@
+crypto:
+  aes:
+    secret: test
+    iv: test
