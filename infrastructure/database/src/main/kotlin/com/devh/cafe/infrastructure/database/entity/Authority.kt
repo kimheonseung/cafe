@@ -22,7 +22,7 @@ class Authority(
     var description: String? = null,
 
     @OneToMany(mappedBy = "authority", fetch = FetchType.LAZY, orphanRemoval = true, cascade = [CascadeType.ALL])
-    val members: ArrayList<Member> = arrayListOf()
+    val members: MutableList<Member> = mutableListOf()
 ) {
 
     override fun equals(other: Any?): Boolean {
