@@ -1,0 +1,12 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+  tomcat:
+    accesslog:
+      enabled: false
+  port: 8000
+
+spring:
+  application:
+    name: member-api
