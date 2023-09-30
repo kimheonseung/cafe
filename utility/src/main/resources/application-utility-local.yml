@@ -9,3 +9,6 @@ jwt:
     access: 86400 # 1day
     refresh: 3600 # 1hour
   header: Authorization
+  cookie:
+    access: a-key
+    refresh: r-key
