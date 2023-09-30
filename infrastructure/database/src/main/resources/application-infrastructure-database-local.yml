@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MariaDBDialect
+  datasource:
+    username: devh
+    password: devh
+    url: jdbc:mariadb://localhost:3306/cafe
+    driver-class-name: org.mariadb.jdbc.Driver
