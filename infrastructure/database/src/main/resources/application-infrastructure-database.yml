@@ -1,0 +1,8 @@
+spring:
+  jpa:
+    show-sql: false
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      javax.persistence.query.timeout: 10000
