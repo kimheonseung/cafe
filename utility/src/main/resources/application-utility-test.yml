@@ -1,4 +1,11 @@
 crypto:
   aes:
     secret: test
-    iv: test
+
+jwt:
+  issuer: devh
+  secret: test
+  expire:
+    access: 86400 # 1day
+    refresh: 3600 # 1hour
+  header: Authorization
