@@ -4,6 +4,8 @@ include("infrastructure:database")
 findProject(":infrastructure:database")?.name = "database"
 include("utility")
 include("api")
+include("api:menu-api")
+findProject(":api:menu-api")?.name = "menu-api"
 
 pluginManagement {
     val kotlinVersion = "1.8.22"
