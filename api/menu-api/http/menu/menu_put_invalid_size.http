@@ -1,0 +1,86 @@
+# 메뉴 생성
+PUT http://localhost:8080/v1/menu
+Content-Type: application/json
+
+[
+  {
+    "categoryId": 1,
+    "menuName": "메뉴1",
+    "menuPrice":  1500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴2",
+    "menuPrice":  2500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴3",
+    "menuPrice":  3500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴4",
+    "menuPrice":  4500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴5",
+    "menuPrice":  5500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴6",
+    "menuPrice":  6500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴7",
+    "menuPrice":  7500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴8",
+    "menuPrice":  8500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴9",
+    "menuPrice":  9500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴10",
+    "menuPrice":  10500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴11",
+    "menuPrice":  11500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴12",
+    "menuPrice":  12500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴13",
+    "menuPrice":  13500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴14",
+    "menuPrice":  14500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴15",
+    "menuPrice":  15500
+  },
+  {
+    "categoryId": 1,
+    "menuName": "메뉴16",
+    "menuPrice":  16500
+  }
+]
