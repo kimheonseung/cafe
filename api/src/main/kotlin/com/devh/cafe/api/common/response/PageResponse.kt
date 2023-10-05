@@ -1,15 +1,8 @@
 package com.devh.cafe.api.common.response
 
+import com.devh.cafe.api.common.paging.Paging
+
 data class PageResponse<T>(
-    val pageInformation: PageInformation,
+    val paging: Paging,
     val list: MutableList<T>,
 ) : CommonResponse()
-
-data class PageInformation(
-    val page: Int,
-    val total: Long,
-    val first: Boolean,
-    val last: Boolean,
-    val next: Boolean,
-    val prev: Boolean,
-)
