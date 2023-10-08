@@ -63,6 +63,10 @@ subprojects {
 		annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 		annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
+		implementation("org.apache.logging.log4j:log4j-api")
+		implementation("org.apache.logging.log4j:log4j-core")
+		implementation("org.apache.logging.log4j:log4j-to-slf4j")
+
 		implementation("org.apache.commons:commons-lang3")
 	}
 }
