@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="appLogPath" value="/logs/${appName}" />
+    <property name="appLogFilePath" value="${appLogPath}/${appName}" />
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%5.10t]){faint} %clr(%-40.40logger{39}){cyan} %clr([%L]){faint} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(${LOG_LEVEL_PATTERN:-%5p}) ${PID:- } [%t] %-40.40logger{39} [%L] : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="APP_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${appLogFilePath}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${appLogFilePath}.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="local,test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="jdbc" level="OFF"/>
+        <logger name="jdbc.sqlonly" level="DEBUG"/>
+        <logger name="jdbc.sqltiming" level="OFF"/>
+        <logger name="jdbc.audit" level="OFF"/>
+        <logger name="jdbc.resultset" level="OFF"/>
+        <logger name="jdbc.resultsettable" level="OFF"/>
+        <logger name="jdbc.connection" level="OFF"/>
+    </springProfile>
+
+    <springProfile name="production">
+        <root level="INFO">
+            <appender-ref ref="APP_LOG_FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="jdbc" level="OFF"/>
+        <logger name="jdbc.sqlonly" level="DEBUG"/>
+        <logger name="jdbc.sqltiming" level="OFF"/>
+        <logger name="jdbc.audit" level="OFF"/>
+        <logger name="jdbc.resultset" level="OFF"/>
+        <logger name="jdbc.resultsettable" level="OFF"/>
+        <logger name="jdbc.connection" level="OFF"/>
+    </springProfile>
+</configuration>
