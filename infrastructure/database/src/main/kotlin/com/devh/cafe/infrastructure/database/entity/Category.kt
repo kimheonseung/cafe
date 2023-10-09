@@ -29,7 +29,10 @@ class Category(
     var parent: Category? = null,
 
     @OneToMany(mappedBy = "parent", cascade = [CascadeType.REMOVE], orphanRemoval = true)
-    val subCategories: MutableList<Category> = mutableListOf()
+    val subCategories: MutableList<Category> = mutableListOf(),
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], orphanRemoval = true, mappedBy = "category")
+    val options: MutableList<Option> = mutableListOf(),
 ) {
     fun changeName(name: String) {
         this.name = name
@@ -69,6 +72,14 @@ class Category(
         return this.subCategories.size > 0
     }
 
+    fun addOption(option: Option) {
+        this.options.add(option)
+    }
+
+    fun removeOption(option: Option) {
+        this.options.remove(option)
+    }
+
     override fun equals(other: Any?): Boolean {
         return if (other is Category) {
             this.name == other.name
@@ -76,6 +87,12 @@ class Category(
     }
 
     override fun toString(): String {
-        return "Category[id: ${this.id}, name: ${this.name}, parent: ${this.parent?.name}, subCategories: ${this.subCategories}]"
+        return "Category[" +
+                    "id: ${this.id}, " +
+                    "name: ${this.name}, " +
+                    "parent: ${this.parent?.name}, " +
+                    "subCategories: ${this.subCategories}, " +
+                    "options: ${this.options}" +
+                "]"
     }
 }
