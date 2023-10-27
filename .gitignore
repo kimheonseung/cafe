@@ -375,7 +375,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -521,3 +520,5 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,java,gradle,macos,windows,visualstudiocode,vuejs,react,python,intellij,eclipse
 cafe.iml
+
+docker/data
