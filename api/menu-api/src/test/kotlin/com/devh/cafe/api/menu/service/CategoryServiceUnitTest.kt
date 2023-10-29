@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -236,6 +237,138 @@ class CategoryServiceUnitTest {
         val page = categoryService.get(categoryGetRequest)
         // then
         assertEquals(categories.size, page.list.size)
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_하위의_카테고리를_조회한다() {
+        // given
+        val mainCategoryName = "메인"
+        val mainCategory = Category(id = 1, name = mainCategoryName)
+        val subCategoryName1 = "서브1"
+        val subCategory1 = Category(id = 2, name = subCategoryName1)
+        val subCategoryName2 = "서브2"
+        val subCategory2 = Category(id = 3, name = subCategoryName2)
+        val subSubCategoryName1 = "서브1-1"
+        val subSubCategory1 = Category(id = 4, name = subSubCategoryName1)
+        val subSubCategoryName2 = "서브1-2"
+        val subSubCategory2 = Category(id = 5, name = subSubCategoryName2)
+        val expectedSubCategoryNames = mutableListOf(subCategoryName1, subCategoryName2)
+
+        mainCategory.addSubCategory(subCategory1)
+        mainCategory.addSubCategory(subCategory2)
+        subCategory1.addSubCategory(subSubCategory1)
+        subCategory1.addSubCategory(subSubCategory2)
+        `when`(
+            categoryRepository.findById(mainCategory.id!!)
+        ).thenReturn(
+            Optional.of(mainCategory)
+        )
+        `when`(
+            categoryRepository.findAllByParent(mainCategory, PageRequest.of(0, 10))
+        ).thenReturn(
+            PageImpl(mutableListOf(subCategory1,subCategory2), Pageable.ofSize(10), 2)
+        )
+        // when
+        val subCategoriesPageData = categoryService.getSubCategoriesByParentId(CategoryGetRequest(parentId = 1, page = 1, size = 10))
+        val subCategoryNames = subCategoriesPageData.list.map { it.name }.toMutableList()
+        // then
+        assertAll(
+            { assertEquals(expectedSubCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(expectedSubCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(expectedSubCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리명_하위의_모든_카테고리를_재귀_조회한다() {
+        // given
+        val mainCategoryName = "메인"
+        val mainCategory = Category(id = 1, name = mainCategoryName)
+        val subCategoryName1 = "서브1"
+        val subCategory1 = Category(id = 2, name = subCategoryName1)
+        val subCategoryName2 = "서브2"
+        val subCategory2 = Category(id = 3, name = subCategoryName2)
+        val subSubCategoryName1 = "서브1-1"
+        val subSubCategory1 = Category(id = 4, name = subSubCategoryName1)
+        val subSubCategoryName2 = "서브1-2"
+        val subSubCategory2 = Category(id = 5, name = subSubCategoryName2)
+        val givenCategoryNames = mutableSetOf(
+            mainCategoryName,
+            subCategoryName1,
+            subSubCategoryName1,
+            subSubCategoryName2,
+            subCategoryName2
+        )
+        mainCategory.addSubCategory(subCategory1)
+        mainCategory.addSubCategory(subCategory2)
+        subCategory1.addSubCategory(subSubCategory1)
+        subCategory1.addSubCategory(subSubCategory2)
+        `when`(
+            categoryRepository.findSubCategoryNamesRecursiveByName(mainCategoryName)
+        ).thenReturn(
+            mutableSetOf(
+                mainCategory,
+                subCategory1,
+                subSubCategory1,
+                subSubCategory2,
+                subCategory2,
+            )
+        )
+        // when
+        val subCategories = categoryService.getSubCategoryNamesRecursiveByName(name = mainCategoryName)
+        val subCategoryNames = subCategories.map { it.name }.toMutableList()
+        // then
+        assertAll(
+            { assertEquals(givenCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(givenCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(givenCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_하위의_모든_카테고리를_재귀_조회한다() {
+        // given
+        val mainCategoryName = "메인"
+        val mainCategory = Category(id = 1, name = mainCategoryName)
+        val subCategoryName1 = "서브1"
+        val subCategory1 = Category(id = 2, name = subCategoryName1)
+        val subCategoryName2 = "서브2"
+        val subCategory2 = Category(id = 3, name = subCategoryName2)
+        val subSubCategoryName1 = "서브1-1"
+        val subSubCategory1 = Category(id = 4, name = subSubCategoryName1)
+        val subSubCategoryName2 = "서브1-2"
+        val subSubCategory2 = Category(id = 5, name = subSubCategoryName2)
+        val givenCategoryNames = mutableSetOf(
+            mainCategoryName,
+            subCategoryName1,
+            subSubCategoryName1,
+            subSubCategoryName2,
+            subCategoryName2
+        )
+        mainCategory.addSubCategory(subCategory1)
+        mainCategory.addSubCategory(subCategory2)
+        subCategory1.addSubCategory(subSubCategory1)
+        subCategory1.addSubCategory(subSubCategory2)
+        `when`(
+            categoryRepository.findSubCategoryNamesRecursiveById(mainCategory.id!!)
+        ).thenReturn(
+            mutableSetOf(
+                mainCategory,
+                subCategory1,
+                subSubCategory1,
+                subSubCategory2,
+                subCategory2,
+            )
+        )
+        // when
+        val subCategories = categoryService.getSubCategoryNamesRecursiveById(id = mainCategory.id!!)
+        val subCategoryNames = subCategories.map { it.name }.toMutableList()
+        // then
+        assertAll(
+            { assertEquals(givenCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(givenCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(givenCategoryNames)) },
+        )
     }
 
     @Test
