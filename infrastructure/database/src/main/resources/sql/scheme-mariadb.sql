@@ -13,6 +13,7 @@ alter table if exists sub_option
 
 drop table if exists authority;
 drop table if exists category;
+drop table if exists member;
 drop table if exists menu;
 drop table if exists option;
 drop table if exists sub_option;
