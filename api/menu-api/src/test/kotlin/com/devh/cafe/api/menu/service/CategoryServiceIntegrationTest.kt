@@ -38,6 +38,28 @@ class CategoryServiceIntegrationTest(
         defaultCategory1 = categoryRepository.save(Category(name = defaultCategoryName1))
         defaultCategory2 = categoryRepository.save(Category(name = defaultCategoryName2))
         defaultCategory3 = categoryRepository.save(Category(name = defaultCategoryName3))
+
+        val mainCategoryName = "메인"
+        val mainCategory = Category(name = mainCategoryName)
+        val subCategoryName1 = "서브1"
+        val subCategory1 = Category(name = subCategoryName1)
+        val subCategoryName2 = "서브2"
+        val subCategory2 = Category(name = subCategoryName2)
+        val subSubCategoryName1 = "서브1-1"
+        val subSubCategory1 = Category(name = subSubCategoryName1)
+        val subSubCategoryName2 = "서브1-2"
+        val subSubCategory2 = Category(name = subSubCategoryName2)
+        mainCategory.addSubCategory(subCategory1)
+        mainCategory.addSubCategory(subCategory2)
+        subCategory1.addSubCategory(subSubCategory1)
+        subCategory1.addSubCategory(subSubCategory2)
+        categoryRepository.saveAllAndFlush(mutableListOf(
+            mainCategory,
+            subCategory1,
+            subSubCategory1,
+            subSubCategory2,
+            subCategory2
+        ))
     }
 
     @Test
@@ -149,7 +171,49 @@ class CategoryServiceIntegrationTest(
         // when
         val page = categoryService.get(categoryGetRequest)
         // then
-        assertEquals(3, page.list.size)
+        assertEquals(8, page.list.size)
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_하위의_카테고리를_조회한다() {
+        // given
+        val givenParentId = categoryService.getByName("메인").id
+        // when
+        val subCategoriesPageData = categoryService.getSubCategoriesByParentId(
+            CategoryGetRequest(parentId = givenParentId, page = 1, size = 10)
+        )
+        val subCategoryNames = subCategoriesPageData.list.map { it.name }
+        // then
+        assertAll(
+            { assertEquals(2, subCategoryNames.size) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리명_하위의_모든_카테고리를_재귀_조회한다() {
+        // given
+        val mainCategoryName = "메인"
+        // when
+        val subCategories = categoryService.getSubCategoryNamesRecursiveByName(name = mainCategoryName)
+        val subCategoryNames = subCategories.map { it.name }
+        // then
+        assertAll(
+            { assertEquals(5, subCategoryNames.size) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_하위의_모든_카테고리를_재귀_조회한다() {
+        // given
+        val mainCategoryId = 4L
+        // when
+        val subCategories = categoryService.getSubCategoryNamesRecursiveById(id = mainCategoryId)
+        println(subCategories)
+        val subCategoryNames = subCategories.map { it.name }
+        // then
+        assertAll(
+            { assertEquals(5, subCategoryNames.size) },
+        )
     }
 
     @Test

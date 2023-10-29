@@ -72,6 +72,38 @@ class CategoryServiceImpl(
         )
     }
 
+    override fun getSubCategoriesByParentId(categoryGetRequest: CategoryGetRequest): CategoryPageData {
+
+        val parentCategory = categoryRepository.findById(categoryGetRequest.parentId!!).orElseThrow { throw categoryDoesNotExists() }
+
+        val pageRequest = PageRequest.of(categoryGetRequest.page - 1, categoryGetRequest.size)
+        val subCategoriesPage = categoryRepository.findAllByParent(parentCategory, pageRequest)
+
+        return CategoryPageData(
+            paging = Paging(
+                page = subCategoriesPage.pageable.pageNumber + 1,
+                total = subCategoriesPage.totalElements,
+                first = subCategoriesPage.isFirst,
+                last = subCategoriesPage.isLast,
+                next = subCategoriesPage.hasNext(),
+                prev = subCategoriesPage.hasPrevious()
+            ),
+            list = subCategoriesPage.content.map(this::convertToCategoryData).toMutableList()
+        )
+    }
+
+    override fun getSubCategoryNamesRecursiveByName(name: String): MutableList<CategorySimpleData> {
+        return categoryRepository.findSubCategoryNamesRecursiveByName(name)
+            .map { CategorySimpleData(id = it.id!!, name = it.name) }
+            .toMutableList()
+    }
+
+    override fun getSubCategoryNamesRecursiveById(id: Long): MutableList<CategorySimpleData> {
+        return categoryRepository.findSubCategoryNamesRecursiveById(id)
+            .map { CategorySimpleData(id = it.id!!, name = it.name) }
+            .toMutableList()
+    }
+
     @Transactional
     override fun update(categoryUpdateRequest: CategoryUpdateRequest): CategoryData {
         val category = categoryRepository.findById(categoryUpdateRequest.id).orElseThrow { categoryDoesNotExists() }
