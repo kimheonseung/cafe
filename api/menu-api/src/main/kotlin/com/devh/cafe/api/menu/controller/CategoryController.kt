@@ -60,6 +60,25 @@ class CategoryController(
         )
     }
 
+    @GetMapping("/sub/{parentId}")
+    fun getSubCategory(
+        @Min(1) @PathVariable(value = "parentId") parentId: Long,
+        @Min(1) @RequestParam(defaultValue = "1") page: Int,
+        @Min(1) @RequestParam(defaultValue = "$DEFAULT_SIZE") size: Int,
+    ): PageResponse<CategoryData> {
+        val categoryGetRequest = CategoryGetRequest(
+            parentId = parentId,
+            page = page,
+            size = size,
+        )
+        log.debug("category get sub request")
+        val categoryPageData = categoryService.getSubCategoriesByParentId(categoryGetRequest)
+        return PageResponse(
+            paging = categoryPageData.paging,
+            list = categoryPageData.list
+        )
+    }
+
     @PostMapping
     fun updateCategory(@Valid @RequestBody categoryUpdateRequest: CategoryUpdateRequest): MessageResponse {
         log.debug("category update request: {}", categoryUpdateRequest)
