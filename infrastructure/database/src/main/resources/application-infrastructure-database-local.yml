@@ -14,6 +14,6 @@ spring:
   sql:
     init:
       platform: mariadb
-      schema-locations: classpath*:sql/scheme-${spring.sql.init.platform}.sql
-      data-locations: classpath*:sql/data-${spring.sql.init.platform}.sql
+      schema-locations: classpath*:sql/local/scheme-${spring.sql.init.platform}.sql
+      data-locations: classpath*:sql/local/data-${spring.sql.init.platform}.sql
       mode: always
