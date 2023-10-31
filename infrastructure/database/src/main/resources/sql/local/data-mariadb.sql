@@ -6,6 +6,7 @@ insert into category
     (4, 1, '플랫치노'),
     (5, 3, '카페인'),
     (6, 3, '디카페인');
+
 insert into menu
     (id, name, price, category_id, available) values
     (1, '아메리카노', 1500, 5, true),
@@ -36,22 +37,3 @@ insert into sub_option
     (10, '우유', 0, 1, 5),
     (11, '두유', 0, 2, 5),
     (12, '오트밀', 0, 3, 5);
-
--- 1 depth 카테고리 조회
-# select id, name from category order by id;
-
--- 2 depth 이상 카테고리 조회 (부모 카테고리의 id = 1)
-# with recursive cte (id, name, parent) as (
-#     select id, name, parent  from category where id = 1
-#     union all
-#     select child.id, child.name, child.parent from category child inner join cte on child.parent = cte.id
-# )
-# select id, name, parent from cte;
-
--- 카테고리가 1인 하위에 묶인 모든 메뉴 조회
-# with recursive cte (id, name, parent) as (
-#     select id, name, parent  from category where id = 1
-#     union all
-#     select child.id, child.name, child.parent from category child inner join cte on child.parent = cte.id
-# )
-# select name from menu where category_id in (select id from cte);

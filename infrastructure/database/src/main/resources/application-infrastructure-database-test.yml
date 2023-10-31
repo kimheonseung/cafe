@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -15,3 +15,9 @@ spring:
     username: sa
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
+  sql:
+    init:
+      platform: h2
+      schema-locations: classpath*:sql/test/scheme-${spring.sql.init.platform}.sql
+      data-locations: classpath*:sql/test/data-${spring.sql.init.platform}.sql
+      mode: always
