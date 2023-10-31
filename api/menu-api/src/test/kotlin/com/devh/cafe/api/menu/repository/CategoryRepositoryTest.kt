@@ -2,6 +2,10 @@ package com.devh.cafe.api.menu.repository
 
 import com.devh.cafe.api.menu.repository.configuration.RepositoryTest
 import com.devh.cafe.infrastructure.database.entity.Category
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverage
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageRecursiveSubCategories
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageSubCategories
+import com.devh.cafe.infrastructure.database.fixture.newCategory
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -18,7 +22,7 @@ class CategoryRepositoryTest(
     @Test
     fun 카테고리_이름이_주어질_때_저장에_성공한다() {
         // given
-        val givenCategoryName = "카테고리1"
+        val givenCategoryName = newCategory().name
         // when
         val savedCategory = categoryRepository.save(Category(name = givenCategoryName))
         println(savedCategory)
@@ -32,9 +36,7 @@ class CategoryRepositoryTest(
     @Test
     fun 카테고리_이름이_주어질_때_조회에_성공한다() {
         // given
-        val givenCategoryName = "카테고리1"
-        val givenCategory = Category(name = givenCategoryName)
-        categoryRepository.save(givenCategory)
+        val givenCategoryName = fixtureCategoryBeverage.name
         // when
         val foundCategory = categoryRepository.findByName(givenCategoryName).get()
         // then
@@ -47,130 +49,51 @@ class CategoryRepositoryTest(
     @Test
     fun 특정_카테고리_아이디_하위의_카테고리를_조회한다() {
         // given
-        val mainCategoryName = "메인"
-        val mainCategory = Category(name = mainCategoryName)
-        val subCategoryName1 = "서브1"
-        val subCategory1 = Category(name = subCategoryName1)
-        val subCategoryName2 = "서브2"
-        val subCategory2 = Category(name = subCategoryName2)
-        val subSubCategoryName1 = "서브1-1"
-        val subSubCategory1 = Category(name = subSubCategoryName1)
-        val subSubCategoryName2 = "서브1-2"
-        val subSubCategory2 = Category(name = subSubCategoryName2)
-        val givenSubCategories = mutableSetOf(
-            subCategoryName1,
-            subCategoryName2,
-        )
-        categoryRepository.saveAll(mutableListOf(
-            mainCategory,
-            subCategory1,
-            subSubCategory1,
-            subSubCategory2,
-            subCategory2
-        ))
-
-        mainCategory.addSubCategory(subCategory1)
-        mainCategory.addSubCategory(subCategory2)
-        subCategory1.addSubCategory(subSubCategory1)
-        subCategory1.addSubCategory(subSubCategory2)
-
+        val givenMainCategoryName = fixtureCategoryBeverage.name
+        val givenSubCategoryNames = fixtureCategoryBeverageSubCategories.map { it.name }
         // when
+        val mainCategory = categoryRepository.findByName(givenMainCategoryName).get()
         val subCategoriesPage = categoryRepository.findAllByParent(parent = mainCategory, PageRequest.of(0, 10))
         val categoryNames = subCategoriesPage.map { it.name }.content
         println(categoryNames)
         // then
         assertAll(
-            { assertTrue(givenSubCategories.size == categoryNames.size) },
-            { assertTrue(givenSubCategories.containsAll(categoryNames)) },
-            { assertTrue(categoryNames.containsAll(givenSubCategories)) },
+            { assertTrue(givenSubCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenSubCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenSubCategoryNames)) },
         )
     }
 
     @Test
     fun 특정_카테고리_아이디_하위의_모든_카테고리명을_조회한다() {
         // given
-        val mainCategoryName = "메인"
-        val mainCategory = Category(name = mainCategoryName)
-        val subCategoryName1 = "서브1"
-        val subCategory1 = Category(name = subCategoryName1)
-        val subCategoryName2 = "서브2"
-        val subCategory2 = Category(name = subCategoryName2)
-        val subSubCategoryName1 = "서브1-1"
-        val subSubCategory1 = Category(name = subSubCategoryName1)
-        val subSubCategoryName2 = "서브1-2"
-        val subSubCategory2 = Category(name = subSubCategoryName2)
-        val givenCategoryNames = mutableSetOf(
-            mainCategoryName,
-            subCategoryName1,
-            subSubCategoryName1,
-            subSubCategoryName2,
-            subCategoryName2
-        )
-        categoryRepository.saveAll(mutableListOf(
-            mainCategory,
-            subCategory1,
-            subSubCategory1,
-            subSubCategory2,
-            subCategory2
-        ))
-
-        mainCategory.addSubCategory(subCategory1)
-        mainCategory.addSubCategory(subCategory2)
-        subCategory1.addSubCategory(subSubCategory1)
-        subCategory1.addSubCategory(subSubCategory2)
-
+        val givenMainCategoryId = fixtureCategoryBeverage.id!!
+        val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
-        val subCategories = categoryRepository.findSubCategoryNamesRecursiveById(id = 1)
+        val subCategories = categoryRepository.findSubCategoryNamesRecursiveById(id = givenMainCategoryId)
         val categoryNames = subCategories.map { it.name }
         // then
         assertAll(
-            { assertTrue(givenCategoryNames.size == categoryNames.size) },
-            { assertTrue(givenCategoryNames.containsAll(categoryNames)) },
-            { assertTrue(categoryNames.containsAll(givenCategoryNames)) },
+            { assertTrue(givenRecursiveSubCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveSubCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveSubCategoryNames)) },
         )
     }
 
     @Test
     fun 특정_카테고리명_하위의_모든_카테고리명을_조회한다() {
         // given
-        val mainCategoryName = "메인"
-        val mainCategory = Category(name = mainCategoryName)
-        val subCategoryName1 = "서브1"
-        val subCategory1 = Category(name = subCategoryName1)
-        val subCategoryName2 = "서브2"
-        val subCategory2 = Category(name = subCategoryName2)
-        val subSubCategoryName1 = "서브1-1"
-        val subSubCategory1 = Category(name = subSubCategoryName1)
-        val subSubCategoryName2 = "서브1-2"
-        val subSubCategory2 = Category(name = subSubCategoryName2)
-        val givenCategoryNames = mutableSetOf(
-            mainCategoryName,
-            subCategoryName1,
-            subSubCategoryName1,
-            subSubCategoryName2,
-            subCategoryName2
-        )
-        categoryRepository.saveAll(mutableListOf(
-            mainCategory,
-            subCategory1,
-            subSubCategory1,
-            subSubCategory2,
-            subCategory2
-        ))
-
-        mainCategory.addSubCategory(subCategory1)
-        mainCategory.addSubCategory(subCategory2)
-        subCategory1.addSubCategory(subSubCategory1)
-        subCategory1.addSubCategory(subSubCategory2)
-
+        val givenMainCategoryName = fixtureCategoryBeverage.name
+        val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
-        val subCategories = categoryRepository.findSubCategoryNamesRecursiveByName(name = mainCategoryName)
+        val mainCategory = categoryRepository.findByName(givenMainCategoryName).get()
+        val subCategories = categoryRepository.findSubCategoryNamesRecursiveByName(name = mainCategory.name)
         val categoryNames = subCategories.map { it.name }
         // then
         assertAll(
-            { assertTrue(givenCategoryNames.size == categoryNames.size) },
-            { assertTrue(givenCategoryNames.containsAll(categoryNames)) },
-            { assertTrue(categoryNames.containsAll(givenCategoryNames)) },
+            { assertTrue(givenRecursiveSubCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveSubCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveSubCategoryNames)) },
         )
     }
 }

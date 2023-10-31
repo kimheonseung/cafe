@@ -7,65 +7,34 @@ import com.devh.cafe.api.menu.controller.request.CategoryUpdateRequest
 import com.devh.cafe.api.menu.exception.CategoryException
 import com.devh.cafe.api.menu.exception.MSG_CATEGORY_ALREADY_EXISTS
 import com.devh.cafe.api.menu.exception.MSG_CATEGORY_NOT_EXISTS
-import com.devh.cafe.api.menu.repository.CategoryRepository
 import com.devh.cafe.api.menu.service.configuration.ServiceTest
-import com.devh.cafe.infrastructure.database.entity.Category
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryAll
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverage
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageRecursiveSubCategories
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageSubCategories
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryCaffeine
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryDecaffeine
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryFlatccino
+import com.devh.cafe.infrastructure.database.fixture.newCategory
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 @ServiceTest
 class CategoryServiceIntegrationTest(
     @Autowired
-    val categoryRepository: CategoryRepository,
-    @Autowired
     val categoryService: CategoryService,
 ) {
-    var defaultCategory1: Category? = null
-    var defaultCategory2: Category? = null
-    var defaultCategory3: Category? = null
-
-    @BeforeAll
-    fun 기본_카테고리_3개를_세팅한다() {
-        val defaultCategoryName1 = "기본 카테고리1"
-        val defaultCategoryName2 = "기본 카테고리2"
-        val defaultCategoryName3 = "기본 카테고리3"
-        defaultCategory1 = categoryRepository.save(Category(name = defaultCategoryName1))
-        defaultCategory2 = categoryRepository.save(Category(name = defaultCategoryName2))
-        defaultCategory3 = categoryRepository.save(Category(name = defaultCategoryName3))
-
-        val mainCategoryName = "메인"
-        val mainCategory = Category(name = mainCategoryName)
-        val subCategoryName1 = "서브1"
-        val subCategory1 = Category(name = subCategoryName1)
-        val subCategoryName2 = "서브2"
-        val subCategory2 = Category(name = subCategoryName2)
-        val subSubCategoryName1 = "서브1-1"
-        val subSubCategory1 = Category(name = subSubCategoryName1)
-        val subSubCategoryName2 = "서브1-2"
-        val subSubCategory2 = Category(name = subSubCategoryName2)
-        mainCategory.addSubCategory(subCategory1)
-        mainCategory.addSubCategory(subCategory2)
-        subCategory1.addSubCategory(subSubCategory1)
-        subCategory1.addSubCategory(subSubCategory2)
-        categoryRepository.saveAllAndFlush(mutableListOf(
-            mainCategory,
-            subCategory1,
-            subSubCategory1,
-            subSubCategory2,
-            subCategory2
-        ))
-    }
 
     @Test
     fun 카테고리_이름이_주어질_때_저장에_성공한다() {
         // given
-        val givenName = "카테고리1"
+        val givenName = newCategory().name
         val givenCategoryCreateRequest = CategoryCreateRequest(name = givenName)
         // when & then
         assertDoesNotThrow { categoryService.create(givenCategoryCreateRequest) }
@@ -74,21 +43,22 @@ class CategoryServiceIntegrationTest(
     @Test
     fun 카테고리_이름과_부모_카테고리_id가_주어질_때_저장에_성공한다() {
         // given
-        val givenName = "카테고리"
-        val givenCategoryCreateRequest = CategoryCreateRequest(name = givenName, parentId = defaultCategory1!!.id)
+        val givenName = newCategory().name
+        val givenParentId = fixtureCategoryBeverage.id
+        val givenCategoryCreateRequest = CategoryCreateRequest(name = givenName, parentId = givenParentId)
         // when
         val categoryData = categoryService.create(givenCategoryCreateRequest)
         // then
         assertAll(
             { assertEquals(givenName, categoryData.name) },
-            { assertEquals(defaultCategory1!!.name, categoryData.parent!!.name) }
+            { assertEquals(givenParentId, categoryData.parent!!.id) }
         )
     }
 
     @Test
     fun 이미_등록된_카테고리_이름으로_저장에_실패한다() {
         // given
-        val givenName = "기본 카테고리1"
+        val givenName = fixtureCategoryBeverage.name
         val givenCategoryCreateRequest = CategoryCreateRequest(name = givenName)
         // when
         val assertThrows = assertThrows(
@@ -101,7 +71,7 @@ class CategoryServiceIntegrationTest(
     @Test
     fun 카테고리_이름이_주어질_때_조회에_성공한다() {
         // given
-        val givenName = "기본 카테고리1"
+        val givenName = fixtureCategoryBeverage.name
         // when
         val foundCategory = categoryService.getByName(givenName)
         // then
@@ -114,7 +84,7 @@ class CategoryServiceIntegrationTest(
     @Test
     fun 존재하지_않는_카테고리_이름으로_조회에_실패한다() {
         // given
-        val givenName = "존재하지 않는 카테고리명"
+        val givenName = newCategory().name
         // when
         val assertThrows = assertThrows(
             CategoryException::class.java,
@@ -126,7 +96,7 @@ class CategoryServiceIntegrationTest(
     @Test
     fun 카테고리_id가_주어질_때_조회에_성공한다() {
         // given
-        val givenId = defaultCategory1!!.id!!
+        val givenId = fixtureCategoryBeverage.id!!
         // when
         val foundCategory = categoryService.getById(givenId)
         // then
@@ -151,8 +121,8 @@ class CategoryServiceIntegrationTest(
     @Test
     fun 여러개의_카테고리_id가_주어질_때_조회에_성공한다() {
         // given
-        val givenId1 = defaultCategory1!!.id!!
-        val givenId2 = defaultCategory3!!.id!!
+        val givenId1 = fixtureCategoryCaffeine.id!!
+        val givenId2 = fixtureCategoryDecaffeine.id!!
         // when
         val foundCategories = categoryService.getByIds(mutableListOf(givenId1, givenId2))
         // then
@@ -167,17 +137,20 @@ class CategoryServiceIntegrationTest(
         // given
         val givenPage = 1
         val givenSize = 10
+        val givenCategories = fixtureCategoryAll.map { it.name }
         val categoryGetRequest = CategoryGetRequest(page = givenPage, size = givenSize)
         // when
         val page = categoryService.get(categoryGetRequest)
+        println(page.list)
         // then
-        assertEquals(8, page.list.size)
+        assertEquals(givenCategories.size, page.list.size)
     }
 
     @Test
     fun 특정_카테고리_아이디_하위의_카테고리를_조회한다() {
         // given
-        val givenParentId = categoryService.getByName("메인").id
+        val givenParentId = fixtureCategoryBeverage.id!!
+        val givenSubCategoryNames = fixtureCategoryBeverageSubCategories.map { it.name }
         // when
         val subCategoriesPageData = categoryService.getSubCategoriesByParentId(
             CategoryGetRequest(parentId = givenParentId, page = 1, size = 10)
@@ -185,43 +158,51 @@ class CategoryServiceIntegrationTest(
         val subCategoryNames = subCategoriesPageData.list.map { it.name }
         // then
         assertAll(
-            { assertEquals(2, subCategoryNames.size) },
+            { assertEquals(givenSubCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(givenSubCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(givenSubCategoryNames)) },
         )
     }
 
     @Test
     fun 특정_카테고리명_하위의_모든_카테고리를_재귀_조회한다() {
         // given
-        val mainCategoryName = "메인"
+        val givenMainCategoryName = fixtureCategoryBeverage.name
+        val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
-        val subCategories = categoryService.getSubCategoryNamesRecursiveByName(name = mainCategoryName)
+        val subCategories = categoryService.getSubCategoryNamesRecursiveByName(name = givenMainCategoryName)
         val subCategoryNames = subCategories.map { it.name }
         // then
         assertAll(
-            { assertEquals(5, subCategoryNames.size) },
+            { assertEquals(givenRecursiveSubCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(givenRecursiveSubCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(givenRecursiveSubCategoryNames)) },
         )
     }
 
     @Test
     fun 특정_카테고리_아이디_하위의_모든_카테고리를_재귀_조회한다() {
         // given
-        val mainCategoryId = 4L
+        val givenMainCategoryId = fixtureCategoryBeverage.id!!
+        val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
-        val subCategories = categoryService.getSubCategoryNamesRecursiveById(id = mainCategoryId)
+        val subCategories = categoryService.getSubCategoryNamesRecursiveById(id = givenMainCategoryId)
         println(subCategories)
         val subCategoryNames = subCategories.map { it.name }
         // then
         assertAll(
-            { assertEquals(5, subCategoryNames.size) },
+            { assertEquals(givenRecursiveSubCategoryNames.size, subCategoryNames.size) },
+            { assertTrue(givenRecursiveSubCategoryNames.containsAll(subCategoryNames)) },
+            { assertTrue(subCategoryNames.containsAll(givenRecursiveSubCategoryNames)) },
         )
     }
 
     @Test
     fun 변경할_카테고리_이름이_주어질_때_변경에_성공한다() {
         // given
-        val givenName = "새로운 이름"
+        val givenName = newCategory().name
         val categoryUpdateRequest = CategoryUpdateRequest(
-            id = defaultCategory1!!.id!!,
+            id = fixtureCategoryBeverage.id!!,
             name = givenName
         )
         // when
@@ -235,9 +216,9 @@ class CategoryServiceIntegrationTest(
         // given
         val categoryDeleteRequest = CategoryDeleteRequest(
             ids = mutableListOf(
-                defaultCategory1!!.id!!.toLong(),
-                defaultCategory2!!.id!!.toLong(),
-                defaultCategory3!!.id!!.toLong(),
+                fixtureCategoryFlatccino.id!!,
+                fixtureCategoryCaffeine.id!!,
+                fixtureCategoryDecaffeine.id!!,
             )
         )
         // when & then
