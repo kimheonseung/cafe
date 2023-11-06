@@ -156,14 +156,14 @@ class MenuServiceUnitTest {
             Menu(id = 3, name = "메뉴3", price = 3500L, category = givenCategory),
         )
         `when`(
-            categoryRepository.findById(givenCategory.id!!)
+            categoryRepository.findSubCategoriesRecursiveById(givenCategory.id!!)
         ).thenReturn(
-            Optional.of(givenCategory)
+            mutableSetOf(givenCategory)
         )
 
         `when`(
-            menuRepository.findPageByCategory(
-                givenCategory.id!!,
+            menuRepository.findPageByCategories(
+                mutableListOf(givenCategory.id!!),
                 PageRequest.of(givenMenuGetRequest.page - 1, givenMenuGetRequest.size))
         ).thenReturn(
             PageImpl(list, Pageable.ofSize(givenMenuGetRequest.size), list.size.toLong())
@@ -188,9 +188,9 @@ class MenuServiceUnitTest {
             categoryId = givenUnknownCategoryId,
         )
         `when`(
-            categoryRepository.findById(givenUnknownCategoryId)
-        ).thenThrow(
-            categoryDoesNotExists()
+            categoryRepository.findSubCategoriesRecursiveById(givenUnknownCategoryId)
+        ).thenReturn(
+            mutableSetOf()
         )
         // when & then
         val assertThrows = assertThrows(
@@ -216,14 +216,14 @@ class MenuServiceUnitTest {
             Menu(id = 3, name = "메뉴3", price = 3500L, category = givenCategory),
         )
         `when`(
-            categoryRepository.findByName(givenCategory.name)
+            categoryRepository.findSubCategoriesRecursiveByName(givenCategory.name)
         ).thenReturn(
-            Optional.of(givenCategory)
+            mutableSetOf(givenCategory)
         )
 
         `when`(
-            menuRepository.findPageByCategory(
-                givenCategory.id!!,
+            menuRepository.findPageByCategories(
+                mutableListOf(givenCategory.id!!),
                 PageRequest.of(givenMenuGetRequest.page - 1, givenMenuGetRequest.size))
         ).thenReturn(
             PageImpl(list, Pageable.ofSize(givenMenuGetRequest.size), list.size.toLong())
@@ -248,9 +248,9 @@ class MenuServiceUnitTest {
             categoryName = givenUnknownCategoryName,
         )
         `when`(
-            categoryRepository.findByName(givenUnknownCategoryName)
-        ).thenThrow(
-            categoryDoesNotExists()
+            categoryRepository.findSubCategoriesRecursiveByName(givenUnknownCategoryName)
+        ).thenReturn(
+            mutableSetOf()
         )
         // when & then
         val assertThrows = assertThrows(
@@ -272,14 +272,14 @@ class MenuServiceUnitTest {
         )
         val list = emptyList<Menu>()
         `when`(
-            categoryRepository.findByName(givenCategory.name)
+            categoryRepository.findSubCategoriesRecursiveByName(givenCategory.name)
         ).thenReturn(
-            Optional.of(givenCategory)
+            mutableSetOf(givenCategory)
         )
 
         `when`(
-            menuRepository.findPageByCategory(
-                givenCategory.id!!,
+            menuRepository.findPageByCategories(
+                mutableListOf(givenCategory.id!!),
                 PageRequest.of(givenMenuGetRequest.page - 1, givenMenuGetRequest.size))
         ).thenReturn(
             PageImpl(list, Pageable.ofSize(givenMenuGetRequest.size), list.size.toLong())
@@ -333,8 +333,8 @@ class MenuServiceUnitTest {
             { assertEquals(givenName, menuData.name) },
             { assertEquals(givenPrice, menuData.price) },
             { assertEquals(givenAvailable, menuData.available) },
-            { assertEquals(givenNewCategory.id, menuData.categoryId) },
-            { assertEquals(givenNewCategory.name, menuData.categoryName) },
+            { assertEquals(givenNewCategory.id, menuData.category.id) },
+            { assertEquals(givenNewCategory.name, menuData.category.name) },
         )
     }
 
