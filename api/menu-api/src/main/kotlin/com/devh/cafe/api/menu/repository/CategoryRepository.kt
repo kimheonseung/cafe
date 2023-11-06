@@ -27,7 +27,7 @@ interface CategoryRepository : JpaRepository<Category, Long> {
             select id, name, parent from cte
         """
     )
-    fun findSubCategoryNamesRecursiveById(@Param(value = "id") id: Long): MutableSet<Category>
+    fun findSubCategoriesRecursiveById(@Param(value = "id") id: Long): MutableSet<Category>
     @Query(
         nativeQuery = true,
         value = """
@@ -41,5 +41,5 @@ interface CategoryRepository : JpaRepository<Category, Long> {
             select id, name, parent from cte
         """
     )
-    fun findSubCategoryNamesRecursiveByName(@Param(value = "name") name: String): MutableSet<Category>
+    fun findSubCategoriesRecursiveByName(@Param(value = "name") name: String): MutableSet<Category>
 }
