@@ -70,7 +70,7 @@ class CategoryRepositoryTest(
         val givenMainCategoryId = fixtureCategoryBeverage.id!!
         val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
-        val subCategories = categoryRepository.findSubCategoryNamesRecursiveById(id = givenMainCategoryId)
+        val subCategories = categoryRepository.findSubCategoriesRecursiveById(id = givenMainCategoryId)
         val categoryNames = subCategories.map { it.name }
         // then
         assertAll(
@@ -87,7 +87,7 @@ class CategoryRepositoryTest(
         val givenRecursiveSubCategoryNames = fixtureCategoryBeverageRecursiveSubCategories.map { it.name }
         // when
         val mainCategory = categoryRepository.findByName(givenMainCategoryName).get()
-        val subCategories = categoryRepository.findSubCategoryNamesRecursiveByName(name = mainCategory.name)
+        val subCategories = categoryRepository.findSubCategoriesRecursiveByName(name = mainCategory.name)
         val categoryNames = subCategories.map { it.name }
         // then
         assertAll(

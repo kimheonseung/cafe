@@ -12,7 +12,6 @@ import com.devh.cafe.api.menu.controller.request.MenuUpdateRequest
 import com.devh.cafe.api.menu.controller.response.MenuData
 import com.devh.cafe.api.menu.service.MenuService
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Size
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -92,7 +91,7 @@ class MenuController(
     }
 
     @DeleteMapping("/{ids}")
-    fun deleteMenu(@Size(max = 10) @Min(1) @PathVariable ids: MutableList<Long>): MessageResponse {
+    fun deleteMenu(@Size(max = 10) @PathVariable ids: MutableList<Long>): MessageResponse {
         log.debug("menu delete request: {}", ids)
         menuService.delete(MenuDeleteRequest(ids = ids))
         return MessageResponse(message = Message.SUCCESS)

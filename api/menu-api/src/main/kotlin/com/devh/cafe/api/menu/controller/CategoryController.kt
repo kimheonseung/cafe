@@ -87,7 +87,7 @@ class CategoryController(
     }
 
     @DeleteMapping("/{ids}")
-    fun deleteCategory(@Size(max = 10) @Min(1) @PathVariable ids: MutableList<Long>): MessageResponse {
+    fun deleteCategory(@Size(max = 10) @PathVariable ids: MutableList<Long>): MessageResponse {
         log.debug("category delete request: {}", ids)
         categoryService.delete(CategoryDeleteRequest(ids = ids))
         return MessageResponse(message = Message.SUCCESS)

@@ -304,7 +304,7 @@ class CategoryServiceUnitTest {
         subCategory1.addSubCategory(subSubCategory1)
         subCategory1.addSubCategory(subSubCategory2)
         `when`(
-            categoryRepository.findSubCategoryNamesRecursiveByName(mainCategoryName)
+            categoryRepository.findSubCategoriesRecursiveByName(mainCategoryName)
         ).thenReturn(
             mutableSetOf(
                 mainCategory,
@@ -350,7 +350,7 @@ class CategoryServiceUnitTest {
         subCategory1.addSubCategory(subSubCategory1)
         subCategory1.addSubCategory(subSubCategory2)
         `when`(
-            categoryRepository.findSubCategoryNamesRecursiveById(mainCategory.id!!)
+            categoryRepository.findSubCategoriesRecursiveById(mainCategory.id!!)
         ).thenReturn(
             mutableSetOf(
                 mainCategory,

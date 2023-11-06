@@ -93,13 +93,13 @@ class CategoryServiceImpl(
     }
 
     override fun getSubCategoryNamesRecursiveByName(name: String): MutableList<CategorySimpleData> {
-        return categoryRepository.findSubCategoryNamesRecursiveByName(name)
+        return categoryRepository.findSubCategoriesRecursiveByName(name)
             .map { CategorySimpleData(id = it.id!!, name = it.name) }
             .toMutableList()
     }
 
     override fun getSubCategoryNamesRecursiveById(id: Long): MutableList<CategorySimpleData> {
-        return categoryRepository.findSubCategoryNamesRecursiveById(id)
+        return categoryRepository.findSubCategoriesRecursiveById(id)
             .map { CategorySimpleData(id = it.id!!, name = it.name) }
             .toMutableList()
     }
