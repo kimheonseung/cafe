@@ -17,7 +17,8 @@ val fixtureCategoryBeverageRecursiveSubCategories = mutableListOf(fixtureCategor
                                                                   fixtureCategoryFlatccino,
                                                                   fixtureCategoryCaffeine,
                                                                   fixtureCategoryDecaffeine)
-val fixtureCategoryAll = mutableListOf(fixtureCategoryBeverage,
+val fixtureCategoryAll = mutableListOf(fixtureCategoryAlcohol,
+                                       fixtureCategoryBeverage,
                                        fixtureCategoryBakery,
                                        fixtureCategoryCoffee,
                                        fixtureCategoryFlatccino,
