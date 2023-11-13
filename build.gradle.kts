@@ -10,17 +10,17 @@ bootJar.enabled = false
 val querydslVersion by extra ("5.0.0")
 
 plugins {
-	id("org.springframework.boot")
-	id("io.spring.dependency-management")
-	kotlin("plugin.spring")
-	kotlin("plugin.jpa")
-	kotlin("jvm")
-	kotlin("kapt")
+	id("org.springframework.boot") version("3.1.5")
+	id("io.spring.dependency-management") version("1.0.11.RELEASE")
+	kotlin("plugin.spring") version(("1.9.20"))
+	kotlin("plugin.jpa") version(("1.9.20"))
+	kotlin("jvm") version(("1.9.20"))
+	kotlin("kapt") version(("1.9.20"))
 }
 
 allprojects {
 
-	group = "com.devh"
+	group = "com.devh.cafe"
 
 	tasks.withType<JavaCompile> {
 		sourceCompatibility = "17"
@@ -55,6 +55,9 @@ subprojects {
 	}
 
 	dependencies {
+		implementation("org.springframework.boot:spring-boot-starter")
+		implementation("org.springframework.boot:spring-boot-starter-parent:3.1.5")
+
 		implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 		implementation("org.springframework.boot:spring-boot-starter-test")
 
