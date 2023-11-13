@@ -9,6 +9,8 @@ import com.devh.cafe.api.menu.exception.MSG_CATEGORY_ALREADY_EXISTS
 import com.devh.cafe.api.menu.exception.MSG_CATEGORY_NOT_EXISTS
 import com.devh.cafe.api.menu.repository.CategoryRepository
 import com.devh.cafe.infrastructure.database.entity.Category
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryCaffeine
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryCaffeineRecursiveParentCategories
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -368,6 +370,48 @@ class CategoryServiceUnitTest {
             { assertEquals(givenCategoryNames.size, subCategoryNames.size) },
             { assertTrue(givenCategoryNames.containsAll(subCategoryNames)) },
             { assertTrue(subCategoryNames.containsAll(givenCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_상위의_모든_카테고리명을_조회한다() {
+        // given
+        val givenChildCategoryId = fixtureCategoryCaffeine.id!!
+        `when`(
+            categoryRepository.findParentCategoriesRecursiveById(givenChildCategoryId)
+        ).thenReturn(
+            fixtureCategoryCaffeineRecursiveParentCategories.toMutableSet()
+        )
+        val givenRecursiveParentCategoryNames = fixtureCategoryCaffeineRecursiveParentCategories.map { it.name }
+        // when
+        val parentCategories = categoryService.getParentCategoryNamesRecursiveById(id = givenChildCategoryId)
+        val categoryNames = parentCategories.map { it.name }
+        // then
+        assertAll(
+            { assertTrue(givenRecursiveParentCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveParentCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveParentCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리명_상위의_모든_카테고리명을_조회한다() {
+        // given
+        val givenChildCategoryName = fixtureCategoryCaffeine.name!!
+        `when`(
+            categoryRepository.findParentCategoriesRecursiveByName(givenChildCategoryName)
+        ).thenReturn(
+            fixtureCategoryCaffeineRecursiveParentCategories.toMutableSet()
+        )
+        val givenRecursiveParentCategoryNames = fixtureCategoryCaffeineRecursiveParentCategories.map { it.name }
+        // when
+        val parentCategories = categoryService.getParentCategoryNamesRecursiveByName(name = givenChildCategoryName)
+        val categoryNames = parentCategories.map { it.name }
+        // then
+        assertAll(
+            { assertTrue(givenRecursiveParentCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveParentCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveParentCategoryNames)) },
         )
     }
 

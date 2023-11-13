@@ -18,6 +18,8 @@ interface CategoryService {
     fun getSubCategoriesByParentId(categoryGetRequest: CategoryGetRequest): CategoryPageData
     fun getSubCategoryNamesRecursiveByName(name: String): MutableList<CategorySimpleData>
     fun getSubCategoryNamesRecursiveById(id: Long): MutableList<CategorySimpleData>
+    fun getParentCategoryNamesRecursiveByName(name: String): MutableList<CategorySimpleData>
+    fun getParentCategoryNamesRecursiveById(id: Long): MutableList<CategorySimpleData>
     fun update(categoryUpdateRequest: CategoryUpdateRequest): CategoryData
     fun delete(categoryDeleteRequest: CategoryDeleteRequest)
 }
