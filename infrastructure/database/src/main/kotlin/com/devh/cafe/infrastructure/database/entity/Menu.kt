@@ -1,12 +1,15 @@
 package com.devh.cafe.infrastructure.database.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
@@ -27,6 +30,9 @@ class Menu(
     @ManyToOne
     @JoinColumn(name = "category_id")
     var category: Category,
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE], orphanRemoval = true, mappedBy = "menu")
+    val options: MutableList<Option> = mutableListOf(),
 ) {
     init {
         this.category.addMenu(this)
@@ -62,6 +68,14 @@ class Menu(
         category.addMenu(this)
     }
 
+    fun addOption(option: Option) {
+        this.options.add(option)
+    }
+
+    fun removeOption(option: Option) {
+        this.options.remove(option)
+    }
+
     override fun equals(other: Any?): Boolean {
         return if (other is Menu) {
             other.name == this.name
@@ -69,6 +83,13 @@ class Menu(
     }
 
     override fun toString(): String {
-        return "Menu[id: ${this.id}, category: ${this.category.name} name: ${this.name}, price: ${this.price}, available: ${this.available}]"
+        return "Menu[" +
+                    "id: ${this.id}, " +
+                    "category: ${this.category.name}, " +
+                    "name: ${this.name}, " +
+                    "price: ${this.price}, " +
+                    "available: ${this.available}, " +
+                    "options: ${this.options}" +
+                "]"
     }
 }

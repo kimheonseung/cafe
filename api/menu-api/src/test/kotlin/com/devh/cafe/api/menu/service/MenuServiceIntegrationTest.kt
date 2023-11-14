@@ -126,13 +126,12 @@ class MenuServiceIntegrationTest(
     @Test
     fun 카테고리_이름이_주어질_때_관련된_메뉴_조회에_성공한다() {
         // given
-        val givenCategory = fixtureCategoryCoffee
-        val givenMenu = fixtureMenu(category = fixtureCategoryCoffee)
+        val givenMenu = fixtureMenu(category = fixtureCategoryCaffeine)
         val givenMenuGetRequest = MenuGetRequest(
             page = 1,
             size = 10,
             type = MenuGetType.BY_CATEGORY_NAME,
-            categoryName = fixtureCategoryCoffee.name,
+            categoryName = fixtureCategoryCaffeine.name,
         )
         // when
         val menuPageData = menuService.get(givenMenuGetRequest)

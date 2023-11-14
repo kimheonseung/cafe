@@ -104,6 +104,18 @@ class CategoryServiceImpl(
             .toMutableList()
     }
 
+    override fun getParentCategoryNamesRecursiveByName(name: String): MutableList<CategorySimpleData> {
+        return categoryRepository.findParentCategoriesRecursiveByName(name)
+            .map { CategorySimpleData(id = it.id!!, name = it.name) }
+            .toMutableList()
+    }
+
+    override fun getParentCategoryNamesRecursiveById(id: Long): MutableList<CategorySimpleData> {
+        return categoryRepository.findParentCategoriesRecursiveById(id)
+            .map { CategorySimpleData(id = it.id!!, name = it.name) }
+            .toMutableList()
+    }
+
     @Transactional
     override fun update(categoryUpdateRequest: CategoryUpdateRequest): CategoryData {
         val category = categoryRepository.findById(categoryUpdateRequest.id).orElseThrow { categoryDoesNotExists() }

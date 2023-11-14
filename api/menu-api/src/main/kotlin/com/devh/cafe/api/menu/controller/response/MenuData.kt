@@ -6,8 +6,7 @@ data class MenuData(
     val id: Long,
     val name: String,
     val price: Long,
-    val categoryId: Long,
-    val categoryName: String,
+    val category: CategorySimpleData,
     val available: Boolean,
 )
 

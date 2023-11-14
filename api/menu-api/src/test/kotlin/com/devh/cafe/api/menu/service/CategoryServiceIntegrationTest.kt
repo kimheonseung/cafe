@@ -13,6 +13,7 @@ import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverage
 import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageRecursiveSubCategories
 import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryBeverageSubCategories
 import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryCaffeine
+import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryCaffeineRecursiveParentCategories
 import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryDecaffeine
 import com.devh.cafe.infrastructure.database.fixture.fixtureCategoryFlatccino
 import com.devh.cafe.infrastructure.database.fixture.newCategory
@@ -194,6 +195,38 @@ class CategoryServiceIntegrationTest(
             { assertEquals(givenRecursiveSubCategoryNames.size, subCategoryNames.size) },
             { assertTrue(givenRecursiveSubCategoryNames.containsAll(subCategoryNames)) },
             { assertTrue(subCategoryNames.containsAll(givenRecursiveSubCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리_아이디_상위의_모든_카테고리명을_조회한다() {
+        // given
+        val givenChildCategoryId = fixtureCategoryCaffeine.id!!
+        val givenRecursiveParentCategoryNames = fixtureCategoryCaffeineRecursiveParentCategories.map { it.name }
+        // when
+        val parentCategories = categoryService.getParentCategoryNamesRecursiveById(id = givenChildCategoryId)
+        val categoryNames = parentCategories.map { it.name }
+        // then
+        assertAll(
+            { assertTrue(givenRecursiveParentCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveParentCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveParentCategoryNames)) },
+        )
+    }
+
+    @Test
+    fun 특정_카테고리명_상위의_모든_카테고리명을_조회한다() {
+        // given
+        val givenChildCategoryName = fixtureCategoryCaffeine.name!!
+        val givenRecursiveParentCategoryNames = fixtureCategoryCaffeineRecursiveParentCategories.map { it.name }
+        // when
+        val parentCategories = categoryService.getParentCategoryNamesRecursiveByName(name = givenChildCategoryName)
+        val categoryNames = parentCategories.map { it.name }
+        // then
+        assertAll(
+            { assertTrue(givenRecursiveParentCategoryNames.size == categoryNames.size) },
+            { assertTrue(givenRecursiveParentCategoryNames.containsAll(categoryNames)) },
+            { assertTrue(categoryNames.containsAll(givenRecursiveParentCategoryNames)) },
         )
     }
 

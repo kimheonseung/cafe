@@ -6,6 +6,7 @@ import com.devh.cafe.api.menu.controller.request.MenuDeleteRequest
 import com.devh.cafe.api.menu.controller.request.MenuGetRequest
 import com.devh.cafe.api.menu.controller.request.MenuGetType
 import com.devh.cafe.api.menu.controller.request.MenuUpdateRequest
+import com.devh.cafe.api.menu.controller.response.CategorySimpleData
 import com.devh.cafe.api.menu.controller.response.MenuData
 import com.devh.cafe.api.menu.controller.response.MenuPageData
 import com.devh.cafe.api.menu.exception.categoryDoesNotExists
@@ -46,17 +47,20 @@ class MenuServiceImpl(
 
     @Transactional
     override fun get(menuGetRequest: MenuGetRequest): MenuPageData {
-        val category = when (menuGetRequest.type) {
+        val categories = when (menuGetRequest.type) {
             MenuGetType.BY_CATEGORY_ID -> {
-                categoryRepository.findById(menuGetRequest.categoryId!!).orElseThrow { categoryDoesNotExists() }
+                categoryRepository.findSubCategoriesRecursiveById(id = menuGetRequest.categoryId!!)
             }
             MenuGetType.BY_CATEGORY_NAME -> {
-                categoryRepository.findByName(menuGetRequest.categoryName!!).orElseThrow { categoryDoesNotExists() }
+                categoryRepository.findSubCategoriesRecursiveByName(name = menuGetRequest.categoryName!!)
             }
         }
-        val page = menuRepository.findPageByCategory(categoryId = category.id!!,
-                                                     pageable = PageRequest.of(
-                                                         menuGetRequest.page - 1, menuGetRequest.size))
+        if (categories.isEmpty()) {
+            throw categoryDoesNotExists()
+        }
+        val page = menuRepository.findPageByCategories(categoryIds = categories.map { it.id!! }.toMutableList(),
+                                                       pageable = PageRequest.of(
+                                                               menuGetRequest.page - 1, menuGetRequest.size))
 
         return MenuPageData(
             paging = Paging(
@@ -116,8 +120,7 @@ class MenuServiceImpl(
             name = menu.name,
             price = menu.price,
             available = menu.available,
-            categoryId = menu.category.id!!,
-            categoryName = menu.category.name,
+            category = CategorySimpleData(id = menu.category.id!!, name = menu.category.name),
         )
     }
 }

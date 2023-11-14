@@ -35,4 +35,25 @@ class MenuQuerydslRepositoryImpl(
             .fetchOne() ?: 0
         return PageImpl(content, pageable, count)
     }
+
+    override fun findPageByCategories(categoryIds: MutableList<Long>, pageable: Pageable): Page<Menu> {
+        val qMenu = QMenu.menu
+        val qCategory = QCategory.category
+        val content = jpaQueryFactory
+            .select(qMenu)
+            .from(qMenu)
+            .join(qCategory)
+            .on(qMenu.category.id.eq(qCategory.id))
+            .where(qCategory.id.`in`(categoryIds))
+            .limit(pageable.pageSize.toLong())
+            .offset(pageable.offset)
+            .orderBy(qMenu.id.asc())
+            .fetch()
+        val count = jpaQueryFactory
+            .select(qMenu.count())
+            .from(qMenu)
+            .where(qMenu.category.id.`in`(categoryIds))
+            .fetchOne() ?: 0
+        return PageImpl(content, pageable, count)
+    }
 }

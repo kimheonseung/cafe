@@ -7,6 +7,7 @@ import com.devh.cafe.api.menu.controller.request.MenuDeleteRequest
 import com.devh.cafe.api.menu.controller.request.MenuGetRequest
 import com.devh.cafe.api.menu.controller.request.MenuGetType
 import com.devh.cafe.api.menu.controller.request.MenuUpdateRequest
+import com.devh.cafe.api.menu.controller.response.CategorySimpleData
 import com.devh.cafe.api.menu.controller.response.MenuData
 import com.devh.cafe.api.menu.controller.response.MenuPageData
 import com.devh.cafe.api.menu.exception.CategoryException
@@ -56,8 +57,7 @@ class MenuControllerUnitTest {
                     id = givenId,
                     name = givenName,
                     price = givenPrice,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = CategorySimpleData(id = givenCategoryId, name = givenCategoryName),
                     available = givenAvailable
                 )
             )
@@ -99,6 +99,7 @@ class MenuControllerUnitTest {
         // given
         val givenCategoryId = 1L
         val givenCategoryName = "카테고리"
+        val givenCategory = CategorySimpleData(id = givenCategoryId, name = givenCategoryName)
         val givenPage = 1
         val givenSize = 10
         val givenMenuPageData = MenuPageData(
@@ -115,22 +116,19 @@ class MenuControllerUnitTest {
                     id = 1L,
                     name = "메뉴1",
                     price = 1000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
                 MenuData(
                     id = 2L,
                     name = "카테고리2",
                     price = 2000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
                 MenuData(
                     id = 3L,
                     name = "카테고리3",
                     price = 3000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
             )
         )
@@ -185,6 +183,7 @@ class MenuControllerUnitTest {
         // given
         val givenCategoryId = 1L
         val givenCategoryName = "카테고리"
+        val givenCategory = CategorySimpleData(id = givenCategoryId, name = givenCategoryName)
         val givenPage = 1
         val givenSize = 10
         val givenMenuPageData = MenuPageData(
@@ -201,22 +200,19 @@ class MenuControllerUnitTest {
                     id = 1L,
                     name = "메뉴1",
                     price = 1000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
                 MenuData(
                     id = 2L,
                     name = "카테고리2",
                     price = 2000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
                 MenuData(
                     id = 3L,
                     name = "카테고리3",
                     price = 3000L,
-                    categoryId = givenCategoryId,
-                    categoryName = givenCategoryName,
+                    category = givenCategory,
                     available = true),
             )
         )
@@ -289,8 +285,7 @@ class MenuControllerUnitTest {
                 id = givenId,
                 name = givenName,
                 price = givenPrice,
-                categoryId = givenCategoryId,
-                categoryName = givenCategoryName,
+                category = CategorySimpleData(id = givenCategoryId, name = givenCategoryName),
                 available = givenAvailable),
         )
         // when
