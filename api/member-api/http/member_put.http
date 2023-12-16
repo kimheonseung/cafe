@@ -1,0 +1,11 @@
+# 멤버 등록
+PUT http://localhost:8080/v1/member
+Content-Type: application/json
+
+{
+  "username": "사용자1",
+  "password": "password",
+  "name": "사용자명",
+  "nickName": "닉네임",
+  "email": "email@email.com"
+}
