@@ -38,3 +38,12 @@ insert into sub_option
     (4010, '우유', 0, 1, 3005),
     (4011, '두유', 0, 2, 3005),
     (4012, '오트밀', 0, 3, 3005);
+
+insert into authority
+    (id, name, description) values
+    (1001, '일반', '일반 권한');
+
+
+insert into member
+    (id, username, password, name, nickname, email, create_date, update_date) values
+    (9001, 'hskim', 'hskim', 'kim', 'kim', 'hskim@cafe.devh.com', now(), now());
