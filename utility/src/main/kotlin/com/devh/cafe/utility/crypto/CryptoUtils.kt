@@ -1,12 +1,11 @@
 package com.devh.cafe.utility.crypto
 
 import com.devh.cafe.utility.crypto.exception.CryptoException
-import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.ByteBuffer
 import java.security.SecureRandom
-import java.util.*
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
@@ -20,7 +19,7 @@ class CryptoUtils(
 ) {
 
     fun encrypt(s: String): String {
-        if(StringUtils.isNotBlank(s)) {
+        if(s.isNotBlank()) {
             val saltBytes = createSaltBytes()
             val secretKeySpec = newSecretKeySpec(saltBytes)
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
@@ -43,7 +42,7 @@ class CryptoUtils(
     }
 
     fun decrypt(s: String): String {
-        if(StringUtils.isNotBlank(s)) {
+        if(s.isNotBlank()) {
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             val byteBuffer = ByteBuffer.wrap(Base64.getDecoder().decode(s))
 

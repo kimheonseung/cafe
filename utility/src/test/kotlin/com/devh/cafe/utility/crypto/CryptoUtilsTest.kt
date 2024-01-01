@@ -1,62 +1,57 @@
 package com.devh.cafe.utility.crypto
 
 import com.devh.cafe.utility.crypto.exception.CryptoException
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.shouldNotBe
 
-class CryptoUtilsTest {
+class CryptoUtilsTest : BehaviorSpec({
 
-    private val cryptoUtils = CryptoUtils(SECRET="secret")
+    val cryptoUtils = CryptoUtils(SECRET="secret")
 
-    @Test
-    fun 인코딩_성공_테스트() {
-        // given
+    given("cryptoUtils의 secret이 설정되고, 원시 문자열이 주어질 때") {
         val givenString = "test"
-        // when
-        val encrypted = cryptoUtils.encrypt(givenString)
-        // then
-        println(encrypted)
-        Assertions.assertNotNull(encrypted)
+        `when`("암호화를 하면") {
+            val encrypted = cryptoUtils.encrypt(givenString)
+            then("null이 아닌 문자열이 반환된다.") {
+                println(encrypted)
+                encrypted shouldNotBe null
+            }
+        }
     }
 
-    @Test
-    fun 인코딩_실패_테스트() {
-        // given
+    given("cryptoUtils의 secret이 설정되고, 잘못된 원시 문자열이 주어질 때") {
         val givenString1 = ""
         val givenString2 = " "
-        // when & then
-        Assertions.assertAll(
-            { Assertions.assertThrows(CryptoException::class.java) { cryptoUtils.encrypt(givenString1) } },
-            { Assertions.assertThrows(CryptoException::class.java) { cryptoUtils.encrypt(givenString2) } },
-        )
+        `when`("암호화를 하면") {
+            shouldThrow<CryptoException> {
+                cryptoUtils.encrypt(givenString1)
+                cryptoUtils.encrypt(givenString2)
+            }
+        }
     }
 
-    @Test
-    fun 디코딩_성공_테스트() {
-        // given
+    given("cryptoUtils의 secret이 설정되고, 암호화된 문자열이 주어질 때") {
         val givenDecrypted = "test"
         val givenEncrypted = cryptoUtils.encrypt(givenDecrypted)
-        // when
-        val decrypted = cryptoUtils.decrypt(givenEncrypted)
-        // then
-        println(decrypted)
-        Assertions.assertAll(
-            { Assertions.assertNotNull(decrypted) },
-            { Assertions.assertEquals(decrypted, givenDecrypted) },
-        )
-        Assertions.assertNotNull(decrypted)
-        Assertions.assertNotNull(decrypted)
+        `when`("복호화를 하면") {
+            val decrypted = cryptoUtils.decrypt(givenEncrypted)
+            then("원래 문자열과 일치한다.") {
+                decrypted shouldNotBe null
+                decrypted shouldBeEqual givenDecrypted
+            }
+        }
     }
 
-    @Test
-    fun 디코딩_실패_테스트() {
-        // given
+    given("cryptoUtils의 secret이 설정되고, 잘못된 암호화된 문자열이 주어질 때") {
         val givenString1 = ""
         val givenString2 = " "
-        // when & then
-        Assertions.assertAll(
-            { Assertions.assertThrows(CryptoException::class.java) { cryptoUtils.decrypt(givenString1) } },
-            { Assertions.assertThrows(CryptoException::class.java) { cryptoUtils.decrypt(givenString2) } },
-        )
+        `when`("복호화를 하면") {
+            shouldThrow<CryptoException> {
+                cryptoUtils.encrypt(givenString1)
+                cryptoUtils.encrypt(givenString2)
+            }
+        }
     }
-}
+})
