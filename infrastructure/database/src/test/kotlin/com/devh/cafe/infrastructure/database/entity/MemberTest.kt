@@ -1,18 +1,18 @@
 package com.devh.cafe.infrastructure.database.entity
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldBeOneOf
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
-class MemberTest {
-    @Test
-    fun 필수_정보로_회원_객체_생성() {
-        // given
+class MemberTest : DescribeSpec({
+
+    describe("필수 회원 정보로 회원이 생성될 때") {
         val givenUsername = "회원아이디"
         val givenPassword = "비밀번호"
         val givenName = "이름"
         val givenNickname = "닉네임"
         val givenEmail = "메일@주소.com"
-        // when
         val member = Member(
             username=givenUsername,
             password=givenPassword,
@@ -20,86 +20,31 @@ class MemberTest {
             nickname=givenNickname,
             email=givenEmail
         )
-        // then
-        Assertions.assertAll(
-            { Assertions.assertEquals(member.username, givenUsername) },
-            { Assertions.assertEquals(member.password, givenPassword) },
-            { Assertions.assertEquals(member.name, givenName) },
-            { Assertions.assertEquals(member.nickname, givenNickname) },
-            { Assertions.assertEquals(member.email, givenEmail) },
-            { Assertions.assertNotNull(member.createDate) },
-            { Assertions.assertNotNull(member.updateDate) },
-        )
-    }
+        context("해당 정보에 대한 회원 객체를 생성한다.") {
+            member.username shouldBe givenUsername
+            member.password shouldBe givenPassword
+            member.name shouldBe givenName
+            member.nickname shouldBe givenNickname
+            member.email shouldBe givenEmail
+            member.createDate shouldNotBe null
+            member.updateDate shouldNotBe null
+        }
+        context("해당 정보에 대한 회원 객체의 초기 권한은 null이다.") {
+            member.authority shouldBe null
+        }
+        context("기본 권한을 갱신한다.") {
+            val authority = Authority(id=1, name="권한1")
+            member.updateAuthority(authority)
 
-    @Test
-    fun 초기_권한_null_확인() {
-        // given
-        val givenUsername = "회원아이디"
-        val givenPassword = "비밀번호"
-        val givenName = "이름"
-        val givenNickname = "닉네임"
-        val givenEmail = "메일@주소.com"
-        // when
-        val member = Member(
-            username=givenUsername,
-            password=givenPassword,
-            name=givenName,
-            nickname=givenNickname,
-            email=givenEmail
-        )
-        // then
-        Assertions.assertNull(member.authority)
-    }
+            member.authority shouldNotBe null
+            member.authority shouldBe authority
+            member shouldBeOneOf authority.members
+        }
+        context("권한을 삭제한다.") {
+            val authority = Authority(id=1, name="권한1")
+            member.removeAuthority()
 
-    @Test
-    fun 권한을_갱신() {
-        // given
-        val givenUsername = "회원아이디"
-        val givenPassword = "비밀번호"
-        val givenName = "이름"
-        val givenNickname = "닉네임"
-        val givenEmail = "메일@주소.com"
-        val member = Member(
-            id=1,
-            username=givenUsername,
-            password=givenPassword,
-            name=givenName,
-            nickname=givenNickname,
-            email=givenEmail
-        )
-        val authority = Authority(id=1, name="권한1")
-        // when
-        member.updateAuthority(authority)
-        // then
-        Assertions.assertAll(
-            { Assertions.assertNotNull(member.authority) },
-            { Assertions.assertEquals(member.authority, authority) },
-            { Assertions.assertEquals(member, authority.members[0]) },
-        )
+            member.authority shouldBe null
+        }
     }
-
-    @Test
-    fun 권한을_삭제() {
-        // given
-        val givenUsername = "회원아이디"
-        val givenPassword = "비밀번호"
-        val givenName = "이름"
-        val givenNickname = "닉네임"
-        val givenEmail = "메일@주소.com"
-        val member = Member(
-            id=1,
-            username=givenUsername,
-            password=givenPassword,
-            name=givenName,
-            nickname=givenNickname,
-            email=givenEmail,
-        )
-        member.updateAuthority(Authority(id=1, name="권한1"))
-        Assertions.assertNotNull(member.authority)
-        // when
-        member.removeAuthority()
-        // then
-        Assertions.assertNull(member.authority)
-    }
-}
+})

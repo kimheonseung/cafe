@@ -47,7 +47,7 @@ class Menu(
     }
 
     fun adjustDiscount(discountRate: Int) {
-        this.price *= (1 - discountRate)
+        this.price *= (1 - (discountRate/100))
     }
 
     fun changeToSoldOut() {

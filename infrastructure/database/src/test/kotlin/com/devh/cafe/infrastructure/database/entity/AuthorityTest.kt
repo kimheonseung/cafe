@@ -1,34 +1,28 @@
 package com.devh.cafe.infrastructure.database.entity
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 
-class AuthorityTest {
-    @Test
-    fun 이름만_설정하여_권한_객체_생성() {
-        // given
+class AuthorityTest : DescribeSpec({
+    describe("권한명이 주어질 때") {
         val givenName = "권한1"
-        // when
-        val authority = Authority(name=givenName)
-        // then
-        Assertions.assertEquals(authority.name, givenName)
+        context("해당 권한명에 대한 권한객체를 생성한다.") {
+            val authority = Authority(name=givenName)
+            authority.name shouldBe givenName
+        }
     }
 
-    @Test
-    fun 이름과_설명을_설정하여_권한_객체_생성() {
-        // given
+    describe("권한명과 설명이 주어질 때") {
         val givenName = "권한1"
         val givenDescription = "설명"
-        // when
-        val authority = Authority(
-            name=givenName,
-            description=givenDescription
-        )
-        // then
-        Assertions.assertAll(
-            { Assertions.assertEquals(authority.name, givenName) },
-            { Assertions.assertEquals(authority.description, givenDescription) },
-        )
+        context("해당 권한명과 설명에 대한 권한객체를 생성한다.") {
+            val authority = Authority(
+                name=givenName,
+                description=givenDescription
+            )
+            authority.name shouldBe givenName
+            authority.description shouldBe givenDescription
+        }
     }
-}
+})

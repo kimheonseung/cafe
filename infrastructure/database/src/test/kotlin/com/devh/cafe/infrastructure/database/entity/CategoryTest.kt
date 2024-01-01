@@ -1,73 +1,61 @@
 package com.devh.cafe.infrastructure.database.entity
 
-import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.shouldBe
 
-class CategoryTest {
+class CategoryTest : DescribeSpec({
 
-    @Test
-    fun 깊이가_0인_카테고리_생성() {
-        // given
+    describe("카테고리명이 주어지고, 하위 카테고리가 없을 때") {
         val givenCategoryName = "카테고리1"
-        // when
-        val category = Category(name = givenCategoryName)
-        // then
-        assertAll(
-            { assertEquals(givenCategoryName, category.name) },
-            { assertNull(category.parent) },
-            { assertTrue(category.subCategories.isEmpty()) },
-        )
+        context("해당 카테고리명에 대한 카테고리 객체를 생성한다.") {
+            val category = Category(name = givenCategoryName)
+
+            category.name shouldBe givenCategoryName
+            category.parent shouldBe null
+            category.subCategories.isEmpty() shouldBe true
+        }
     }
 
-    @Test
-    fun 깊이가_1인_카테고리_생성() {
-        // given
+    describe("카테고리명이 주어질고, 하위 카테고리의 깊이가 1일 때") {
         val givenCategoryName = "카테고리1"
-        val givenSubCategoryName = "서브카테고리1"
         val givenCategory = Category(name = givenCategoryName)
-        // when
-        val subCategory = Category(name = givenSubCategoryName)
-        givenCategory.addSubCategory(subCategory)
-        // then
-        assertAll(
-            { assertEquals(givenCategoryName, givenCategory.name) },
-            { assertEquals(subCategory, givenCategory.subCategories[0]) },
-        )
+        val givenSubCategoryName = "서브카테고리1"
+        context("해당 카테고리명에 대한 카테고리 객체를 생성한다.") {
+            val subCategory = Category(name = givenSubCategoryName)
+            givenCategory.addSubCategory(subCategory)
+
+            givenCategory.name shouldBe givenCategoryName
+            givenCategory.subCategories shouldContain subCategory
+        }
     }
 
-    @Test
-    fun 깊이가_1인_하위_카테고리_제거() {
-        // given
+    describe("카테고리명이 주어질고, 하위 카테고리가 2개 존재할 때") {
         val givenCategoryName = "카테고리1"
+        val givenCategory = Category(name = givenCategoryName)
         val givenSubCategoryName1 = "서브카테고리1"
         val givenSubCategoryName2 = "서브카테고리2"
-        val givenCategory = Category(name = givenCategoryName)
         val subCategory1 = Category(name = givenSubCategoryName1)
         val subCategory2 = Category(name = givenSubCategoryName2)
         givenCategory.addSubCategory(subCategory1)
         givenCategory.addSubCategory(subCategory2)
-        // when
-        givenCategory.removeSubCategory(subCategory1)
-        // then
-        assertAll(
-            { assertEquals(givenCategoryName, givenCategory.name) },
-            { assertEquals(1, givenCategory.subCategories.size) },
-            { assertEquals(subCategory2, givenCategory.subCategories[0]) },
-        )
+        context("하나의 하위 카테고리를 제거한다.") {
+            givenCategory.removeSubCategory(subCategory1)
+
+            givenCategory.name shouldBe givenCategoryName
+            givenCategory.subCategories.size shouldBe 1
+            givenCategory.subCategories shouldContain subCategory2
+        }
     }
 
-    @Test
-    fun 카테고리명_변경() {
-        // given
+    describe("새로운 카테고리명이 주어질 때") {
         val givenOldName = "이름"
         val givenNewName = "새로운 이름"
-        val category = Category(name = givenOldName)
-        // when
-        category.changeName(givenNewName)
-        // then
-        assertEquals(givenNewName, category.name)
+        val givenCategory = Category(name = givenOldName)
+        context("카테고리명을 변경한다.") {
+            givenCategory.changeName(givenNewName)
+
+            givenCategory.name shouldBe givenNewName
+        }
     }
-}
+})

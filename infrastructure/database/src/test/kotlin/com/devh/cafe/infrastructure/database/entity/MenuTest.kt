@@ -1,39 +1,12 @@
 package com.devh.cafe.infrastructure.database.entity
 
-import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldBeOneOf
+import io.kotest.matchers.shouldBe
 
-class MenuTest {
+class MenuTest : DescribeSpec({
 
-    @Test
-    fun 메뉴_생성() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 4100L
-        val givenAvailable = true
-        val givenCategory = Category(name = "카테고리")
-        // when
-        val menu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory,
-        )
-        // then
-        assertAll(
-            { assertEquals(givenName, menu.name) },
-            { assertEquals(givenPrice, menu.price) },
-            { assertEquals(givenAvailable, menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
-
-    @Test
-    fun 메뉴_이름_변경() {
-        // given
+    describe("메뉴의 기본 정보로 메뉴가 생성될 때") {
         val givenName = "아메리카노"
         val givenPrice = 4100L
         val givenAvailable = true
@@ -44,140 +17,48 @@ class MenuTest {
             available = givenAvailable,
             category = givenCategory,
         )
-        val finalName = "변경된아메리카노"
-        // when
-        menu.changeName(finalName)
-        // then
-        assertAll(
-            { assertEquals(finalName, menu.name) },
-            { assertEquals(givenPrice, menu.price) },
-            { assertEquals(givenAvailable, menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
+        context("해당 정보에 대한 메뉴 객체를 생성한다.") {
+            menu.name shouldBe givenName
+            menu.price shouldBe givenPrice
+            menu.available shouldBe givenAvailable
+            menu.category shouldBe givenCategory
+        }
+        context("메뉴의 이름을 변경한다.") {
+            val finalName = "변경된아메리카노"
+            menu.changeName(finalName)
 
-    @Test
-    fun 메뉴_가격_변경() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 4100L
-        val givenAvailable = true
-        val givenCategory = Category(name = "카테고리")
-        val menu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory
-        )
-        val finalPrice = 4500L
-        // when
-        menu.changePrice(finalPrice)
-        // then
-        assertAll(
-            { assertEquals(givenName, menu.name) },
-            { assertEquals(finalPrice, menu.price) },
-            { assertEquals(givenAvailable, menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
+            menu.name shouldBe finalName
+        }
+        context("메뉴의 가격을 변경한다.") {
+            val finalPrice = 4500L
+            menu.changePrice(finalPrice)
 
-    @Test
-    fun 메뉴_가격_할인가_적용() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 5000L
-        val givenAvailable = true
-        val givenCategory = Category(name = "카테고리")
-        val givenDiscountRate = 10
-        val menu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory
-        )
-        // when
-        menu.adjustDiscount(givenDiscountRate)
-        // then
-        assertAll(
-            { assertEquals(givenName, menu.name) },
-            { assertEquals(givenPrice * (1 - givenDiscountRate), menu.price) },
-            { assertEquals(givenAvailable, menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
+            menu.price shouldBe finalPrice
+        }
+        context("메뉴의 할인가를 반영한다.") {
+            val givenDiscountRate = 10
+            val currentPrice = menu.price
+            menu.adjustDiscount(givenDiscountRate)
 
-    @Test
-    fun 메뉴_상태_품절로_변경() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 4100L
-        val givenAvailable = true
-        val givenCategory = Category(name = "카테고리")
-        val menu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory
-        )
-        // when
-        menu.changeToSoldOut()
-        // then
-        assertAll(
-            { assertEquals(givenName, menu.name) },
-            { assertEquals(givenPrice, menu.price) },
-            { assertFalse(menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
+            menu.price shouldBe currentPrice * (1 - (givenDiscountRate/100))
+        }
+        context("메뉴의 상태를 품절로 변경한다.") {
+            menu.changeToSoldOut()
 
-    @Test
-    fun 메뉴_상태_판매중으로_변경() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 4100L
-        val givenAvailable = false
-        val givenCategory = Category(name = "카테고리")
-        val menu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory
-        )
-        // when
-        menu.changeToOnSale()
-        // then
-        assertAll(
-            { assertEquals(givenName, menu.name) },
-            { assertEquals(givenPrice, menu.price) },
-            { assertTrue(menu.available) },
-            { assertEquals(givenCategory, menu.category) },
-        )
-    }
+            menu.available shouldBe false
+        }
+        context("메뉴의 상태를 판매중으로 변경한다.") {
+            menu.changeToOnSale()
 
-    @Test
-    fun 메뉴_카테고리_변경() {
-        // given
-        val givenName = "아메리카노"
-        val givenPrice = 4100L
-        val givenAvailable = true
-        val givenCategory1 = Category(name = "카테고리")
-        val givenCategory2 = Category(name = "변경카테고리")
-        val givenMenu = Menu(
-            name = givenName,
-            price = givenPrice,
-            available = givenAvailable,
-            category = givenCategory1
-        )
-        // when
-        givenMenu.changeCategory(givenCategory2)
-        // then
-        assertAll(
-            { assertEquals(givenName, givenMenu.name) },
-            { assertEquals(givenPrice, givenMenu.price) },
-            { assertTrue(givenMenu.available) },
-            { assertEquals(0, givenCategory1.menu.size) },
-            { assertEquals(givenMenu, givenCategory2.menu[0]) },
-            { assertEquals(givenCategory2, givenMenu.category) },
-        )
+            menu.available shouldBe true
+        }
+        context("메뉴의 카테고리를 변경한다.") {
+            val finalCategory = Category(name = "변경카테고리")
+            menu.changeCategory(finalCategory)
+
+            menu.category shouldBe finalCategory
+            givenCategory.menu.isEmpty() shouldBe true
+            menu shouldBeOneOf finalCategory.menu
+        }
     }
-}
+})
