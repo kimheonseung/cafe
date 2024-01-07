@@ -1,2 +1,0 @@
-# 메뉴 조회 - 카테고리 ID
-GET http://localhost:8080/v1/menu/category/id/1

@@ -1,0 +1,2 @@
+# 메뉴 조회 - 카테고리 이름
+GET http://localhost:8080/v1/menu/category/name/카테고리1

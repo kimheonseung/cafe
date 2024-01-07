@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+  datasource:
+    url: jdbc:mariadb://localhost:3306/cafe
+    username: cafe
+    password: cafe
+    driver-class-name: org.mariadb.jdbc.Driver
+  sql:
+    init:
+      platform: mariadb
+      schema-locations: classpath*:sql/local/scheme-${spring.sql.init.platform}.sql
+      data-locations: classpath*:sql/local/data-${spring.sql.init.platform}.sql
+      mode: always

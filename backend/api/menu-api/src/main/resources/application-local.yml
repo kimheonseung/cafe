@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: menu-api
+  config:
+    activate:
+      on-profile: local
+    import:
+      - application-infrastructure-database-local.yml
+      - application-utility-local.yml
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: debug

@@ -1,8 +1,0 @@
-# 카테고리 수정
-POST http://localhost:8080/v1/category
-Content-Type: application/json
-
-{
-  "id": 1,
-  "name": ""
-}

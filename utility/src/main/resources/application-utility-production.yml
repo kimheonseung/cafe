@@ -1,4 +1,0 @@
-crypto:
-  aes:
-    secret: devh-secret
-    iv: devh-iv

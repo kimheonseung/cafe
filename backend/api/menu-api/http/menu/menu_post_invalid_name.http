@@ -1,0 +1,11 @@
+# 메뉴 수정
+POST http://localhost:8080/v1/menu
+Content-Type: application/json
+
+{
+  "id": 1,
+  "categoryId": 2,
+  "name": "",
+  "price": 9999,
+  "available": false
+}
